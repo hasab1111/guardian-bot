@@ -1,20 +1,30 @@
 from pyrogram import Client
-
+from flask import Flask
+import threading
 import os
 
 api_id = int(os.environ.get("API_ID"))
 api_hash = os.environ.get("API_HASH")
 bot_token = os.environ.get("BOT_TOKEN")
 
-app = Client(
+bot = Client(
     "guardian",
     api_id=api_id,
     api_hash=api_hash,
     bot_token=bot_token
 )
 
-@app.on_message()
-async def alive(client, message):
-    await message.reply("🤖 البوت شغال")
+app = Flask(__name__)
 
-app.run()
+@app.route("/")
+def home():
+    return "Bot is running"
+
+def run_web():
+    app.run(host="0.0.0.0", port=8000)
+
+def run_bot():
+    bot.run()
+
+threading.Thread(target=run_web).start()
+run_bot()
