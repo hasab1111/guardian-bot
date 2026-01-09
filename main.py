@@ -1,43 +1,21 @@
-from pyrogram import Client
-from flask import Flask
-import threading
+from pyrogram import Client, filters
 import os
 
-api_id = int(os.environ.get("API_ID"))
-api_hash = os.environ.get("API_HASH")
-bot_token = os.environ.get("BOT_TOKEN")
+api_id = int(os.environ["API_ID"])
+api_hash = os.environ["API_HASH"]
+bot_token = os.environ["BOT_TOKEN"]
 
-bot = Client(
+app = Client(
     "guardian",
     api_id=api_id,
     api_hash=api_hash,
     bot_token=bot_token
 )
 
-app = Flask(__name__)
+@app.on_message(filters.command("start"))
+def start(client, message):
+    message.reply("🤖 البوت شغال 24/7")
 
-@app.route("/")
-def home():
-    return "Bot is running"
+print("Bot started")
 
-def run_web():
-    app.run(host="0.0.0.0", port=8000)
-
-def run_bot():
-    bot.run()
-
-threading.Thread(target=run_web).start()
-run_bot()
-from flask import Flask
-import threading
-
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "Bot is running"
-
-def run_flask():
-    app.run(host="0.0.0.0", port=8000)
-
-threading.Thread(target=run_flask).start()
+app.run()
